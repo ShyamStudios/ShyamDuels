@@ -1,0 +1,17 @@
+# ============================================
+# Queue Items Configuration
+# ============================================
+# Items given to players while in queue
+# All other items are cleared when entering queue
+# ============================================
+
+items:
+  leave-queue:
+    slot: 8
+    material: RED_DYE
+    name: "&c&lLeave Queue"
+    lore:
+      - "&7"
+      - "&7Click to exit the queue"
+    commands:
+      - "player:queue leave"

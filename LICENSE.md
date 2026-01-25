@@ -1,0 +1,76 @@
+# License Agreement
+
+**ShyamDuels Plugin - Proprietary Software License**
+
+Copyright © 2026 ShyamDuels. All Rights Reserved.
+
+---
+
+## Terms and Conditions
+
+By downloading, installing, or using this software ("ShyamDuels"), you agree to be bound by the terms of this license agreement.
+
+### 1. Grant of License
+
+This license grants you the right to:
+- Use this plugin on Minecraft servers you are authorized to manage
+- Modify configuration files for your personal/server use
+
+### 2. Restrictions
+
+**You are expressly prohibited from:**
+
+#### 2.1 Redistribution
+- You may **NOT** redistribute this plugin in any form, whether modified or unmodified
+- You may **NOT** share, upload, or distribute the plugin files to any third party
+- You may **NOT** include this plugin in any compilation, bundle, or collection of plugins
+
+#### 2.2 Commercial Use
+- You may **NOT** sell, resell, or offer this plugin for sale
+- You may **NOT** use this plugin as part of a commercial product or service offered for sale
+- You may **NOT** charge users for access to servers running this plugin without proper licensing
+
+#### 2.3 Modification and Derivative Works
+- You may **NOT** decompile, reverse engineer, or disassemble the plugin
+- You may **NOT** modify the source code and redistribute the modified version
+- You may **NOT** create derivative works based on this plugin
+- You may **NOT** remove, alter, or obscure any copyright, trademark, or other proprietary notices
+
+#### 2.4 Misrepresentation
+- You may **NOT** claim this plugin as your own work
+- You may **NOT** remove or modify any attribution to the original authors
+
+### 3. Ownership
+
+This software and all copies thereof are proprietary to ShyamDuels and title to all copies is retained by ShyamDuels. All applicable rights to patents, copyrights, trademarks, and trade secrets in the software are and shall remain in ShyamDuels.
+
+### 4. Termination
+
+This license is effective until terminated. Your rights under this license will terminate automatically without notice if you fail to comply with any term of this license. Upon termination, you must destroy all copies of the software in your possession.
+
+### 5. Disclaimer of Warranties
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+### 6. Limitation of Liability
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+### 7. Enforcement
+
+Violation of any of the terms of this license may result in:
+- Immediate termination of your license
+- Legal action for damages and injunctive relief
+- Reporting to relevant authorities and platforms
+
+### 8. Governing Law
+
+This agreement shall be governed by and construed in accordance with applicable laws.
+
+---
+
+**By using this software, you acknowledge that you have read this agreement, understand it, and agree to be bound by its terms and conditions.**
+
+---
+
+*Last Updated: January 2026*

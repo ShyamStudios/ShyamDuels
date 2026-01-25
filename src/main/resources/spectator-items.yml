@@ -1,0 +1,36 @@
+# ============================================
+# Spectator Items Configuration
+# ============================================
+# Items given to players when spectating
+# ============================================
+
+items:
+  teleporter:
+    slot: 0
+    material: COMPASS
+    name: "&a&lPlayer Teleporter"
+    lore:
+      - "&7"
+      - "&7Click to teleport"
+      - "&7to active players"
+    commands: []
+
+  player-info:
+    slot: 4
+    material: BOOK
+    name: "&e&lMatch Info"
+    lore:
+      - "&7"
+      - "&7View match details"
+    commands: []
+
+  leave-spectate:
+    slot: 8
+    material: RED_BED
+    name: "&c&lReturn to Lobby"
+    lore:
+      - "&7"
+      - "&7Stop spectating and"
+      - "&7return to the lobby"
+    commands:
+      - "player:spectate leave"

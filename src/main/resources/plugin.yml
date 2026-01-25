@@ -1,0 +1,72 @@
+name: ShyamDuels
+version: 1.0-SNAPSHOT
+main: dev.piyush.shyamduels.ShyamDuels
+api-version: 1.20
+authors: [Piyush]
+description: A modern, high-performance duel plugin.
+depend: [FastAsyncWorldEdit]
+softdepend: [PlaceholderAPI]
+
+permissions:
+  shyamduels.admin:
+    description: Admin permission for all plugin commands
+    default: op
+  shyamduels.vip:
+    description: VIP permission for armor trims and other perks
+    default: false
+
+commands:
+  duel:
+    description: Duel another player
+    usage: /duel <player>
+  
+  ffa:
+    description: Join Free For All mode
+    usage: /ffa
+  
+  queue:
+    description: Join a duel queue
+    usage: /queue
+    aliases: [play]
+  
+  kiteditor:
+    description: Open the kit editor to customize your kit layout
+    usage: /kiteditor [kit]
+    aliases: [editkit]
+  
+  leavefight:
+    description: Leave current fight or teleport to lobby
+    usage: /leavefight
+    aliases: [leave, spawn]
+  
+  arena:
+    description: Admin arena management
+    usage: /arena help
+    permission: shyamduels.admin
+    aliases: [shyamarenas]
+  
+  kit:
+    description: Admin kit management
+    usage: /kit help
+    permission: shyamduels.admin
+    aliases: [shyamkits]
+  
+  shyamduels:
+    description: Main plugin admin command
+    usage: /shyamduels
+    permission: shyamduels.admin
+    aliases: [sd]
+  
+  spectate:
+    description: Spectate active arena matches
+    usage: /spectate [player]
+  
+  party:
+    description: Party management commands
+    usage: /party help
+    aliases: [p]
+  
+  partychat:
+    description: Toggle party chat mode
+    usage: /partychat
+    aliases: [pc]
