@@ -1,5 +1,8 @@
 name: Java CI with Maven (Build JAR)
 
+permissions:
+  contents: read
+
 on:
   push:
   pull_request:
