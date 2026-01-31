@@ -5,7 +5,6 @@ import dev.piyush.shyamduels.kit.PlayerKit;
 import dev.piyush.shyamduels.util.SerializerUtils;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,9 +31,7 @@ public class PlayerKitDao {
                 "PRIMARY KEY (player_uuid, kit_name)" +
                 ");";
 
-        try (Connection conn = dbManager.getKitConnection();
-
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
             stmt.execute();
         } catch (SQLException e) {
             ShyamDuels.getInstance().getLogger().log(Level.SEVERE, "Could not create player_kits table", e);
@@ -50,8 +47,7 @@ public class PlayerKitDao {
                 ? SerializerUtils.itemStackArrayToBase64(new ItemStack[] { playerKit.getOffhand() })
                 : "";
 
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
 
             stmt.setString(1, playerKit.getPlayerUuid().toString());
             stmt.setString(2, playerKit.getKitName());
@@ -70,8 +66,7 @@ public class PlayerKitDao {
     public PlayerKit getPlayerKit(UUID playerUuid, String kitName) {
         String sql = "SELECT * FROM player_kits WHERE player_uuid = ? AND kit_name = ?";
 
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
 
             stmt.setString(1, playerUuid.toString());
             stmt.setString(2, kitName);
@@ -106,8 +101,7 @@ public class PlayerKitDao {
 
     public void deletePlayerKit(UUID playerUuid, String kitName) {
         String sql = "DELETE FROM player_kits WHERE player_uuid = ? AND kit_name = ?";
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
             stmt.setString(1, playerUuid.toString());
             stmt.setString(2, kitName);
             stmt.executeUpdate();

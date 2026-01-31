@@ -29,20 +29,21 @@ public class KitDao {
                 "build_whitelist TEXT" +
                 ");";
 
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.execute();
+        try {
+            Connection conn = dbManager.getKitConnection();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.execute();
 
-            try {
-                conn.createStatement().execute("ALTER TABLE kits ADD COLUMN build_whitelist TEXT");
-            } catch (SQLException ignored) {
+                try {
+                    conn.createStatement().execute("ALTER TABLE kits ADD COLUMN build_whitelist TEXT");
+                } catch (SQLException ignored) {
+                }
+
+                try {
+                    conn.createStatement().execute("ALTER TABLE kits ADD COLUMN offhand TEXT");
+                } catch (SQLException ignored) {
+                }
             }
-
-            try {
-                conn.createStatement().execute("ALTER TABLE kits ADD COLUMN offhand TEXT");
-            } catch (SQLException ignored) {
-            }
-
         } catch (SQLException e) {
             ShyamDuels.getInstance().getLogger().log(Level.SEVERE, "Could not create kits table", e);
         }
@@ -63,8 +64,7 @@ public class KitDao {
                 .map(Enum::name)
                 .collect(java.util.stream.Collectors.joining(","));
 
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
 
             stmt.setString(1, kit.getName());
             stmt.setString(2, invB64);
@@ -82,8 +82,7 @@ public class KitDao {
 
     public void deleteKit(String name) {
         String sql = "DELETE FROM kits WHERE name = ?";
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql)) {
             stmt.setString(1, name);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -95,8 +94,7 @@ public class KitDao {
         java.util.List<Kit> kits = new java.util.ArrayList<>();
         String sql = "SELECT * FROM kits";
 
-        try (Connection conn = dbManager.getKitConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = dbManager.getKitConnection().prepareStatement(sql);
                 java.sql.ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
