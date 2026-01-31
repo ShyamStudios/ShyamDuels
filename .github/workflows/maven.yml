@@ -29,12 +29,13 @@ jobs:
         run: |
           echo "TAG=dev-build-${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release + Upload JAR
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
           name: Dev Build — ${{ github.event.head_commit.message }}
           prerelease: true
+          files: target/shyamduels-*.jar
           body: |
             🚧 **Development Build**
 
@@ -48,15 +49,5 @@ jobs:
             https://github.com/ShyamStudios/ShyamDuels/issues
 
             ⚠️ This build may contain bugs. Use for testing only.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload JAR to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG }}
-          files: |
-            target/shyamduels-*.jar
-            !target/original-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
