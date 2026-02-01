@@ -94,16 +94,6 @@ public class KitEditorGui extends FastInv {
             setItem(slotArmor[3], armorContent[3]);
         }
 
-        // Offhand logic moved to end of initialization to prevent overwrites
-
-        if (invContent != null) {
-            for (int i = 0; i < Math.min(invContent.length, 36); i++) {
-                if (invContent[i] != null) {
-                    setItem(9 + i, invContent[i]);
-                }
-            }
-        }
-
         setItem(slotInfo, loader.buildItemFromSection(GUI_KEY, "info", Material.BOOK,
                 Map.of("kit", kit.getName())));
         setItem(slotSave, loader.buildItemFromSection(GUI_KEY, "save", Material.LIME_DYE, Map.of()));
@@ -117,7 +107,7 @@ public class KitEditorGui extends FastInv {
             }
         }
 
-        if (offhandContent != null && !offhandContent.getType().isAir()) {
+        if (offhandContent != null && offhandContent.getType() != Material.AIR) {
             setItem(slotOffhand, offhandContent);
         } else {
             setItem(slotOffhand, loader.buildItemFromSection(GUI_KEY, "offhand", Material.SHIELD, Map.of()));
