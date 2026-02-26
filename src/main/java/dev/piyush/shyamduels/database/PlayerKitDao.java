@@ -43,7 +43,7 @@ public class PlayerKitDao {
 
         String invB64 = SerializerUtils.itemStackArrayToBase64(playerKit.getInventory());
         String armorB64 = SerializerUtils.itemStackArrayToBase64(playerKit.getArmor());
-        String offhandB64 = playerKit.getOffhand() != null
+        String offhandBase64 = playerKit.getOffhand() != null
                 ? SerializerUtils.itemStackArrayToBase64(new ItemStack[] { playerKit.getOffhand() })
                 : "";
 
@@ -53,7 +53,7 @@ public class PlayerKitDao {
             stmt.setString(2, playerKit.getKitName());
             stmt.setString(3, invB64);
             stmt.setString(4, armorB64);
-            stmt.setString(5, offhandB64);
+            stmt.setString(5, offhandBase64);
             stmt.setLong(6, System.currentTimeMillis());
 
             stmt.executeUpdate();
