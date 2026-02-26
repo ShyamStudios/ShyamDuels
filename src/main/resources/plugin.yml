@@ -17,9 +17,12 @@ permissions:
   shyamduels.admin:
     description: Full admin access to all commands
     default: op
+  shyamduels.admin.bypass:
+    description: Bypass build restrictions in arenas
+    default: op
   shyamduels.vip:
     description: VIP features including armor trims and larger parties
-    default: false
+    default: op
   shyamduels.use:
     description: Basic plugin usage
     default: true

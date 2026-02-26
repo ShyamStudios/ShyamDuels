@@ -215,8 +215,6 @@ public class ArmorTrimGui extends FastInv {
 
         if (slot == SLOT_CANCEL) {
             callback.accept(null);
-
-            callback.accept(null);
             return;
         }
 

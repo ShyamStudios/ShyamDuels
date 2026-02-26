@@ -112,6 +112,14 @@ public class KitEditorGui extends FastInv {
         } else {
             setItem(slotOffhand, loader.buildItemFromSection(GUI_KEY, "offhand", Material.SHIELD, Map.of()));
         }
+        
+        if (invContent != null) {
+            for (int i = 0; i < Math.min(invContent.length, 36); i++) {
+                if (invContent[i] != null) {
+                    setItem(9 + i, invContent[i]);
+                }
+            }
+        }
     }
 
     @Override

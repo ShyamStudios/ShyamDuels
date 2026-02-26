@@ -73,22 +73,20 @@ public class StatsManager {
     }
 
     public void recordKill(Player killer, Player victim) {
+        PlayerStats killerStats = getStats(killer);
+        killerStats.addKill();
+
         if (!isEloEnabled()) {
-            PlayerStats killerStats = getStats(killer);
-            killerStats.addKill();
             return;
         }
 
-        PlayerStats killerStats = getStats(killer);
-
         Rank killerOldRank = Rank.getRankForElo(killerStats.getElo());
-
-        killerStats.addKill();
         killerStats.addElo(killEloGain);
 
         Rank killerNewRank = Rank.getRankForElo(killerStats.getElo());
         checkRankChange(killer, killerOldRank, killerNewRank);
     }
+
 
     public void recordDeath(Player victim, Player killer) {
         PlayerStats victimStats = getStats(victim);
@@ -96,16 +94,14 @@ public class StatsManager {
     }
 
     public void recordWin(Player winner) {
+        PlayerStats stats = getStats(winner);
+        stats.addWin();
+        
         if (!isEloEnabled()) {
-            PlayerStats stats = getStats(winner);
-            stats.addWin();
             return;
         }
 
-        PlayerStats stats = getStats(winner);
         Rank oldRank = Rank.getRankForElo(stats.getElo());
-
-        stats.addWin();
         stats.addElo(baseEloGain);
 
         Rank newRank = Rank.getRankForElo(stats.getElo());
@@ -113,16 +109,14 @@ public class StatsManager {
     }
 
     public void recordLoss(Player loser) {
+        PlayerStats stats = getStats(loser);
+        stats.addLoss();
+        
         if (!isEloEnabled()) {
-            PlayerStats stats = getStats(loser);
-            stats.addLoss();
             return;
         }
 
-        PlayerStats stats = getStats(loser);
         Rank oldRank = Rank.getRankForElo(stats.getElo());
-
-        stats.addLoss();
 
         int eloLoss = (int) (baseEloLoss * oldRank.getLossMultiplier());
         stats.removeElo(eloLoss);
