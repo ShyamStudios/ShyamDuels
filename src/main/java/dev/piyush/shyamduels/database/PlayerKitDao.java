@@ -75,16 +75,16 @@ public class PlayerKitDao {
                 if (rs.next()) {
                     PlayerKit pk = new PlayerKit(playerUuid, kitName);
 
-                    String invB64 = rs.getString("inventory");
-                    String armorB64 = rs.getString("armor");
-                    String offhandB64 = rs.getString("offhand");
+                    String inventoryBase64 = rs.getString("inventory");
+                    String armorBase64 = rs.getString("armor");
+                    String offhandBase64 = rs.getString("offhand");
                     long lastEdited = rs.getLong("last_edited");
 
-                    pk.setInventory(SerializerUtils.itemStackArrayFromBase64(invB64));
-                    pk.setArmor(SerializerUtils.itemStackArrayFromBase64(armorB64));
+                    pk.setInventory(SerializerUtils.itemStackArrayFromBase64(inventoryBase64));
+                    pk.setArmor(SerializerUtils.itemStackArrayFromBase64(armorBase64));
 
-                    if (offhandB64 != null && !offhandB64.isEmpty()) {
-                        ItemStack[] items = SerializerUtils.itemStackArrayFromBase64(offhandB64);
+                    if (offhandBase64 != null && !offhandBase64.isEmpty()) {
+                        ItemStack[] items = SerializerUtils.itemStackArrayFromBase64(offhandBase64);
                         if (items.length > 0)
                             pk.setOffhand(items[0]);
                     }
