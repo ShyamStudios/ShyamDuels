@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +21,8 @@ public class FFAManager {
     private final ShyamDuels plugin;
     private final Map<UUID, FFAState> playerStates = new ConcurrentHashMap<>();
     private final Map<String, Long> arenaResetTimers = new ConcurrentHashMap<>();
-    private final Map<String, BukkitTask> arenaTasks = new HashMap<>();
+    private final Map<String, BukkitTask> arenaTasks = new ConcurrentHashMap<>();
+    private final Map<String, Integer> arenaPlayerCounts = new ConcurrentHashMap<>();
 
     public FFAManager(ShyamDuels plugin) {
         this.plugin = plugin;
@@ -32,8 +32,10 @@ public class FFAManager {
     public void reload() {
         arenaTasks.values().forEach(BukkitTask::cancel);
         arenaTasks.clear();
+        arenaPlayerCounts.clear();
         startResetTasks();
     }
+
 
     private void startResetTasks() {
         long interval = plugin.getConfig().getInt("ffa.reset-interval-seconds", 300) * 20L;
@@ -118,6 +120,8 @@ public class FFAManager {
         player.teleport(spawn);
         playerStates.put(player.getUniqueId(), FFAState.FFA_STARTING);
         playerArenaMap.put(player.getUniqueId(), arena.getName());
+        arenaPlayerCounts.compute(arena.getName(), (k, v) -> v == null ? 1 : v + 1);
+
         final Kit finalKit = kit;
         new Runnable() {
             int count = 3;
@@ -144,6 +148,7 @@ public class FFAManager {
         }.run();
     }
 
+
     private void applyFFAKit(Player player, Kit kit) {
         if (player == null || !player.isOnline() || kit == null) {
             return;
@@ -161,8 +166,12 @@ public class FFAManager {
         if (!playerStates.containsKey(player.getUniqueId()))
             return;
 
+        String arenaName = playerArenaMap.remove(player.getUniqueId());
         playerStates.remove(player.getUniqueId());
-        playerArenaMap.remove(player.getUniqueId());
+
+        if (arenaName != null) {
+            arenaPlayerCounts.computeIfPresent(arenaName, (k, v) -> v > 1 ? v - 1 : null);
+        }
 
         player.getInventory().clear();
         player.setHealth(20);
@@ -171,6 +180,7 @@ public class FFAManager {
         teleportToLobby(player);
         plugin.getItemManager().giveSpawnItems(player);
     }
+
 
     public void handleDeath(Player player) {
         if (!playerStates.containsKey(player.getUniqueId()))
@@ -216,13 +226,9 @@ public class FFAManager {
     }
 
     public int getPlayerCount(Arena arena) {
-        int count = 0;
-        for (String arenaName : playerArenaMap.values()) {
-            if (arenaName.equals(arena.getName()))
-                count++;
-        }
-        return count;
+        return arenaPlayerCounts.getOrDefault(arena.getName(), 0);
     }
+
 
     public Arena getPlayerArena(Player player) {
         String arenaName = playerArenaMap.get(player.getUniqueId());

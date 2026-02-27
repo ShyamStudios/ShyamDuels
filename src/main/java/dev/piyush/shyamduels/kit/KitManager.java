@@ -15,7 +15,10 @@ public class KitManager {
     private final Cache<String, Kit> kitCache;
     private final KitDao kitDao;
     private final PlayerKitDao playerKitDao;
-    private final java.util.Map<java.util.UUID, java.util.Map<String, PlayerKit>> playerKitCache = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Cache<java.util.UUID, java.util.Map<String, PlayerKit>> playerKitCache = Caffeine.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(1, java.util.concurrent.TimeUnit.HOURS)
+            .build();
 
     public KitManager(ShyamDuels plugin) {
         this.plugin = plugin;
@@ -69,7 +72,7 @@ public class KitManager {
     }
 
     public PlayerKit getPlayerKit(java.util.UUID uuid, String kitName) {
-        java.util.Map<String, PlayerKit> userKits = playerKitCache.computeIfAbsent(uuid,
+        java.util.Map<String, PlayerKit> userKits = playerKitCache.get(uuid,
                 k -> new java.util.concurrent.ConcurrentHashMap<>());
 
         if (userKits.containsKey(kitName.toLowerCase())) {
@@ -83,9 +86,10 @@ public class KitManager {
         return loaded;
     }
 
+
     public void savePlayerKit(PlayerKit playerKit) {
-        java.util.Map<String, PlayerKit> userKits = playerKitCache
-                .computeIfAbsent(playerKit.getPlayerUuid(), k -> new java.util.concurrent.ConcurrentHashMap<>());
+        java.util.Map<String, PlayerKit> userKits = playerKitCache.get(playerKit.getPlayerUuid(),
+                k -> new java.util.concurrent.ConcurrentHashMap<>());
         userKits.put(playerKit.getKitName().toLowerCase(), playerKit);
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -93,9 +97,10 @@ public class KitManager {
         });
     }
 
+
     
     public void resetPlayerKit(java.util.UUID uuid, String kitName) {
-        java.util.Map<String, PlayerKit> userKits = playerKitCache.get(uuid);
+        java.util.Map<String, PlayerKit> userKits = playerKitCache.getIfPresent(uuid);
         if (userKits != null) {
             userKits.remove(kitName.toLowerCase());
         }
@@ -104,4 +109,5 @@ public class KitManager {
             playerKitDao.deletePlayerKit(uuid, kitName.toLowerCase());
         });
     }
+
 }

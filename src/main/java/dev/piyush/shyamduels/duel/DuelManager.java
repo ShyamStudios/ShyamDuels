@@ -23,10 +23,17 @@ public class DuelManager {
     private final Map<UUID, Duel> endingDuels = new ConcurrentHashMap<>();
 
     public void markEnding(Duel duel, int winningTeamNumber) {
-        duel.setState(Duel.DuelState.ENDING);
-        duel.addRoundWin(winningTeamNumber);
+        synchronized (duel) {
+            if (duel.getState() == Duel.DuelState.ENDING || duel.getState() == Duel.DuelState.ENDED) {
+                return;
+            }
+            duel.setState(Duel.DuelState.ENDING);
+            duel.addRoundWin(winningTeamNumber);
+        }
+        
         duel.getTeam1().forEach(uuid -> endingDuels.put(uuid, duel));
         duel.getTeam2().forEach(uuid -> endingDuels.put(uuid, duel));
+        
         if (duel.hasWonMatch(winningTeamNumber)) {
             String winTitleKey = "duel.title.win";
             String loseTitleKey = "duel.title.loss";

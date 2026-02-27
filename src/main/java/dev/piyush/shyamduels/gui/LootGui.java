@@ -1,7 +1,6 @@
 package dev.piyush.shyamduels.gui;
 
 import dev.piyush.shyamduels.ShyamDuels;
-import dev.piyush.shyamduels.util.MessageUtils;
 import fr.mrmicky.fastinv.FastInv;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,13 +12,10 @@ import java.util.List;
 
 public class LootGui extends FastInv {
 
-    private final ShyamDuels plugin;
     private final List<ItemStack> drops;
-    private boolean closed = false;
 
     public LootGui(ShyamDuels plugin, Player player, String victimName, List<ItemStack> drops) {
         super(54, "Looting: " + victimName);
-        this.plugin = plugin;
         this.drops = drops;
 
         initializeItems();
@@ -45,6 +41,5 @@ public class LootGui extends FastInv {
 
     @Override
     public void onClose(InventoryCloseEvent event) {
-        closed = true;
     }
 }

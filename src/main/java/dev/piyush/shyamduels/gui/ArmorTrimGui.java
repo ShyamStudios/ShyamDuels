@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("deprecation")
 public class ArmorTrimGui extends FastInv {
 
     private ItemStack item;
@@ -54,7 +53,6 @@ public class ArmorTrimGui extends FastInv {
         updateInventory();
     }
 
-    @SuppressWarnings("deprecation")
     private void updateInventory() {
         ItemStack preview = item.clone();
         if (preview.getItemMeta() instanceof ArmorMeta am) {
@@ -92,7 +90,7 @@ public class ArmorTrimGui extends FastInv {
             Material iconMat = getMaterialIcon(mat);
             boolean isSelected = mat.equals(selectedMaterial);
 
-            String key = mat.getKey().getKey();
+            String key = mat.toString().toLowerCase().replace("_", " ");
             String nameFormat = isSelected ? MessageUtils.get("gui.armor-trim.status.format.selected")
                     : MessageUtils.get("gui.armor-trim.status.format.unselected");
             String statusLore = isSelected ? MessageUtils.get("gui.armor-trim.status.selected")
@@ -118,7 +116,7 @@ public class ArmorTrimGui extends FastInv {
 
             boolean isSelected = pat.equals(selectedPattern);
             Material iconMat = getTemplateMaterial(pat);
-            String key = pat.getKey().getKey();
+            String key = pat.toString().toLowerCase().replace("_", " ");
 
             String nameFormat = isSelected ? MessageUtils.get("gui.armor-trim.status.format.selected")
                     : MessageUtils.get("gui.armor-trim.status.format.unselected");
@@ -129,7 +127,6 @@ public class ArmorTrimGui extends FastInv {
                     .name(MessageUtils.color(nameFormat.replace("<name>", formatKey(key))))
                     .lore(MessageUtils.color(statusLore))
                     .glow(isSelected)
-                    .flags(org.bukkit.inventory.ItemFlag.HIDE_POTION_EFFECTS)
                     .build());
             pIndex++;
         }
