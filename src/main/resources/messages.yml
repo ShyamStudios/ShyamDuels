@@ -90,10 +90,20 @@ kit:
 
 duel:
   title:
+    countdown:
+      title: "&{color}{seconds}"
+      subtitle: "&7Round &e{round}&7/&e{max_rounds}"
+    fight:
+      title: "&c&lF&6&lI&e&lG&a&lH&b&lT&d&l!"
+      subtitle: "&7Round &e{round}&7/&e{max_rounds}"
     win: "&a&lVICTORY!"
+    win-subtitle: "&7Round &e{round}&7/&e{max_rounds} &8| &7Score: &e{score}"
     loss: "&c&lDEFEAT"
+    loss-subtitle: "&7Round &e{round}&7/&e{max_rounds} &8| &7Score: &e{score}"
     round-win: "&a&lROUND WON!"
+    round-win-subtitle: "&7Round &e{round}&7/&e{max_rounds} &8| &7Score: &e{score}"
     round-loss: "&c&lROUND LOST"
+    round-loss-subtitle: "&7Round &e{round}&7/&e{max_rounds} &8| &7Score: &e{score}"
   invite:
     sent: "&bDuel request sent to &f{player} &bwith kit &f{kit} &7(Best of {rounds})"
     received: "&eDuel request from &f{player} &ewith kit &f{kit} &7(Best of {rounds})"

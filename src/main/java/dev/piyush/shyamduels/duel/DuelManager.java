@@ -57,18 +57,33 @@ public class DuelManager {
 
     private void sendTeamTitle(Duel duel, int winTeam, String winKey, int loseTeam, String loseKey) {
         net.kyori.adventure.title.Title.Times times = net.kyori.adventure.title.Title.Times.times(
-                java.time.Duration.ofMillis(200), java.time.Duration.ofMillis(4000), java.time.Duration.ofMillis(1000));
+                java.time.Duration.ofMillis(500), java.time.Duration.ofMillis(2000), java.time.Duration.ofMillis(500));
 
-        net.kyori.adventure.text.Component winComp = MessageUtils.parseOrLegacy(MessageUtils.get(winKey), Map.of());
-        net.kyori.adventure.text.Component loseComp = MessageUtils.parseOrLegacy(MessageUtils.get(loseKey), Map.of());
+        Map<String, String> winPlaceholders = Map.of(
+            "round", String.valueOf(duel.getCurrentRound()),
+            "max_rounds", String.valueOf(duel.getMaxRounds()),
+            "score", duel.getTeam1Wins() + " - " + duel.getTeam2Wins()
+        );
+        
+        Map<String, String> losePlaceholders = Map.of(
+            "round", String.valueOf(duel.getCurrentRound()),
+            "max_rounds", String.valueOf(duel.getMaxRounds()),
+            "score", duel.getTeam1Wins() + " - " + duel.getTeam2Wins()
+        );
 
-        net.kyori.adventure.title.Title winTitle = net.kyori.adventure.title.Title.title(
-                winComp,
-                net.kyori.adventure.text.Component.empty(), times);
+        net.kyori.adventure.text.Component winTitle = MessageUtils.parseOrLegacy(MessageUtils.get(winKey), winPlaceholders);
+        net.kyori.adventure.text.Component winSubtitle = MessageUtils.parseOrLegacy(
+            MessageUtils.get(winKey + ".subtitle"), winPlaceholders);
+        
+        net.kyori.adventure.text.Component loseTitle = MessageUtils.parseOrLegacy(MessageUtils.get(loseKey), losePlaceholders);
+        net.kyori.adventure.text.Component loseSubtitle = MessageUtils.parseOrLegacy(
+            MessageUtils.get(loseKey + ".subtitle"), losePlaceholders);
 
-        net.kyori.adventure.title.Title loseTitle = net.kyori.adventure.title.Title.title(
-                loseComp,
-                net.kyori.adventure.text.Component.empty(), times);
+        net.kyori.adventure.title.Title winTitleObj = net.kyori.adventure.title.Title.title(
+                winTitle, winSubtitle, times);
+
+        net.kyori.adventure.title.Title loseTitleObj = net.kyori.adventure.title.Title.title(
+                loseTitle, loseSubtitle, times);
 
         List<UUID> winners = (winTeam == 1) ? duel.getTeam1() : duel.getTeam2();
         List<UUID> losers = (loseTeam == 1) ? duel.getTeam1() : duel.getTeam2();
@@ -76,13 +91,13 @@ public class DuelManager {
         winners.forEach(uuid -> {
             Player p = Bukkit.getPlayer(uuid);
             if (p != null)
-                p.showTitle(winTitle);
+                p.showTitle(winTitleObj);
         });
 
         losers.forEach(uuid -> {
             Player p = Bukkit.getPlayer(uuid);
             if (p != null)
-                p.showTitle(loseTitle);
+                p.showTitle(loseTitleObj);
         });
     }
 
@@ -450,31 +465,67 @@ public class DuelManager {
                 }
 
                 if (seconds > 0) {
-                    net.kyori.adventure.title.Title title = net.kyori.adventure.title.Title.title(
-                            net.kyori.adventure.text.Component.text(seconds,
-                                    net.kyori.adventure.text.format.NamedTextColor.RED),
-                            net.kyori.adventure.text.Component.empty());
+                    String colorCode = switch (seconds) {
+                        case 5, 4 -> "a";
+                        case 3, 2 -> "e";
+                        default -> "c";
+                    };
+                    
+                    Map<String, String> placeholders = Map.of(
+                        "seconds", String.valueOf(seconds),
+                        "color", colorCode,
+                        "round", String.valueOf(duel.getCurrentRound()),
+                        "max_rounds", String.valueOf(duel.getMaxRounds())
+                    );
+                    
+                    String titleText = MessageUtils.get("duel.title.countdown.title");
+                    String subtitleText = MessageUtils.get("duel.title.countdown.subtitle");
+                    
+                    for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                        titleText = titleText.replace("{" + entry.getKey() + "}", entry.getValue());
+                        subtitleText = subtitleText.replace("{" + entry.getKey() + "}", entry.getValue());
+                    }
 
-                    playGlobalSound(duel, org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
+                    net.kyori.adventure.text.Component titleComp = MessageUtils.parseOrLegacy(titleText, Map.of());
+                    net.kyori.adventure.text.Component subtitleComp = MessageUtils.parseOrLegacy(subtitleText, Map.of());
+
+                    net.kyori.adventure.title.Title.Times times = net.kyori.adventure.title.Title.Times.times(
+                        java.time.Duration.ofMillis(0), 
+                        java.time.Duration.ofMillis(1000), 
+                        java.time.Duration.ofMillis(200));
+
+                    net.kyori.adventure.title.Title title = net.kyori.adventure.title.Title.title(
+                            titleComp, subtitleComp, times);
+
+                    float pitch = 0.5f + (0.2f * (6 - seconds));
+                    playGlobalSound(duel, org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1f, pitch);
                     sendGlobalTitle(duel, title);
 
                     seconds--;
                 } else {
                     duel.setState(Duel.DuelState.FIGHTING);
 
+                    Map<String, String> fightPlaceholders = Map.of(
+                        "round", String.valueOf(duel.getCurrentRound()),
+                        "max_rounds", String.valueOf(duel.getMaxRounds())
+                    );
+                    
+                    net.kyori.adventure.text.Component fightTitle = MessageUtils.parseOrLegacy(
+                        MessageUtils.get("duel.title.fight.title"), fightPlaceholders);
+                    net.kyori.adventure.text.Component fightSubtitle = MessageUtils.parseOrLegacy(
+                        MessageUtils.get("duel.title.fight.subtitle"), fightPlaceholders);
+
+                    net.kyori.adventure.title.Title.Times fightTimes = net.kyori.adventure.title.Title.Times.times(
+                        java.time.Duration.ofMillis(200), 
+                        java.time.Duration.ofMillis(1500), 
+                        java.time.Duration.ofMillis(500));
+
                     net.kyori.adventure.title.Title title = net.kyori.adventure.title.Title.title(
-                            net.kyori.adventure.text.Component.text("FIGHT!",
-                                    net.kyori.adventure.text.format.NamedTextColor.GREEN),
-                            net.kyori.adventure.text.Component.empty());
+                            fightTitle, fightSubtitle, fightTimes);
 
                     playGlobalSound(duel, org.bukkit.Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
+                    playGlobalSound(duel, org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 2f);
                     sendGlobalTitle(duel, title);
-                    java.util.stream.Stream.concat(duel.getTeam1().stream(), duel.getTeam2().stream()).forEach(uuid -> {
-                        Player p = Bukkit.getPlayer(uuid);
-                        if (p != null)
-                            MessageUtils.sendMessage(p, "duel.started",
-                                    Map.of("kit", duel.getKit().getName(), "player1", "Team 1", "player2", "Team 2"));
-                    });
 
                     this.cancel();
                 }

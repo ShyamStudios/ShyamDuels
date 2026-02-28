@@ -108,9 +108,13 @@ public class KitEditorGui extends FastInv {
         }
 
         if (offhandContent != null && offhandContent.getType() != Material.AIR) {
-            setItem(slotOffhand, offhandContent);
+            setItem(slotOffhand, offhandContent.clone());
         } else {
-            setItem(slotOffhand, loader.buildItemFromSection(GUI_KEY, "offhand", Material.SHIELD, Map.of()));
+            ItemStack placeholder = loader.buildItemFromSection(GUI_KEY, "offhand", Material.SHIELD, Map.of());
+            if (placeholder != null) {
+                placeholder = new ItemBuilder(placeholder).tag("offhand_placeholder", "true").build();
+            }
+            setItem(slotOffhand, placeholder);
         }
         
         if (invContent != null) {
@@ -127,14 +131,23 @@ public class KitEditorGui extends FastInv {
         int slot = event.getSlot();
 
         boolean isArmorSlot = false;
-        for (int armSlot : slotArmor) {
-            if (slot == armSlot) {
+        int armorSlotIndex = -1;
+        for (int i = 0; i < slotArmor.length; i++) {
+            if (slot == slotArmor[i]) {
                 isArmorSlot = true;
+                armorSlotIndex = i;
                 break;
             }
         }
 
-        if (isArmorSlot || slot == slotOffhand || (slot >= 9 && slot <= 44)) {
+        if (isArmorSlot) {
+            if (!isValidArmorForSlot(event.getCursor(), armorSlotIndex)) {
+                event.setCancelled(true);
+                MessageUtils.sendMessage(player, "gui.kit-editor.messages.invalid-armor-slot");
+                return;
+            }
+            event.setCancelled(false);
+        } else if (slot == slotOffhand || (slot >= 9 && slot <= 44)) {
             event.setCancelled(false);
         } else {
             event.setCancelled(true);
@@ -189,6 +202,31 @@ public class KitEditorGui extends FastInv {
             }
         }
     }
+    
+    private boolean isValidArmorForSlot(ItemStack item, int armorSlotIndex) {
+        if (item == null || item.getType() == Material.AIR) {
+            return true;
+        }
+        
+        String itemName = item.getType().name();
+        
+        switch (armorSlotIndex) {
+            case 0:
+                return itemName.endsWith("_BOOTS");
+            case 1:
+                return itemName.endsWith("_LEGGINGS");
+            case 2:
+                return itemName.endsWith("_CHESTPLATE") || itemName.equals("ELYTRA");
+            case 3:
+                return itemName.endsWith("_HELMET") || itemName.equals("TURTLE_HELMET") || 
+                       itemName.equals("CARVED_PUMPKIN") || itemName.equals("PLAYER_HEAD") ||
+                       itemName.equals("ZOMBIE_HEAD") || itemName.equals("SKELETON_SKULL") ||
+                       itemName.equals("WITHER_SKELETON_SKULL") || itemName.equals("CREEPER_HEAD") ||
+                       itemName.equals("DRAGON_HEAD") || itemName.equals("PIGLIN_HEAD");
+            default:
+                return false;
+        }
+    }
 
     @SuppressWarnings("all")
     public void handleDrag(InventoryDragEvent event) {
@@ -199,14 +237,24 @@ public class KitEditorGui extends FastInv {
             }
 
             boolean isArmorSlot = false;
-            for (int armSlot : slotArmor) {
-                if (rawSlot == armSlot) {
+            int armorSlotIndex = -1;
+            for (int i = 0; i < slotArmor.length; i++) {
+                if (rawSlot == slotArmor[i]) {
                     isArmorSlot = true;
+                    armorSlotIndex = i;
                     break;
                 }
             }
 
-            if (isArmorSlot || rawSlot == slotOffhand || (rawSlot >= 9 && rawSlot <= 44)) {
+            if (isArmorSlot) {
+                if (!isValidArmorForSlot(event.getOldCursor(), armorSlotIndex)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                continue;
+            }
+
+            if (rawSlot == slotOffhand || (rawSlot >= 9 && rawSlot <= 44)) {
                 continue;
             }
 
@@ -223,17 +271,13 @@ public class KitEditorGui extends FastInv {
         armor[3] = getInventory().getItem(slotArmor[3]);
 
         ItemStack offhand = getInventory().getItem(slotOffhand);
-        boolean isPlaceholder = false;
         
-        if (offhand != null && offhand.getType() == Material.SHIELD && offhand.hasItemMeta()) {
-            String displayName = offhand.getItemMeta().displayName().toString();
-            if (displayName.contains("OFFHAND") || displayName.contains("offhand")) {
-                isPlaceholder = true;
+        if (offhand != null && offhand.hasItemMeta()) {
+            org.bukkit.persistence.PersistentDataContainer pdc = offhand.getItemMeta().getPersistentDataContainer();
+            org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, "offhand_placeholder");
+            if (pdc.has(key, org.bukkit.persistence.PersistentDataType.STRING)) {
+                offhand = null;
             }
-        }
-        
-        if (isPlaceholder) {
-            offhand = null;
         }
 
         ItemStack[] inv = new ItemStack[36];

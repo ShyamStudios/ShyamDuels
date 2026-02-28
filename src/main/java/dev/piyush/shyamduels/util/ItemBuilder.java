@@ -116,6 +116,16 @@ public class ItemBuilder {
         }
         return this;
     }
+    
+    public ItemBuilder tag(String key, String value) {
+        if (meta != null) {
+            org.bukkit.NamespacedKey namespacedKey = new org.bukkit.NamespacedKey(
+                dev.piyush.shyamduels.ShyamDuels.getInstance(), key);
+            meta.getPersistentDataContainer().set(namespacedKey, 
+                org.bukkit.persistence.PersistentDataType.STRING, value);
+        }
+        return this;
+    }
 
     public ItemStack getItemStack() {
         return item;
