@@ -1,3 +1,11 @@
+> ⚠️ **WARNING**
+>
+> <span style="color:red"><strong>
+> Bundling or using this plugin in any premade setup, redistributed server package, or public resource (including platforms such as BuiltByBit) is strictly prohibited without explicit written permission from ShyamStudio.
+>
+> This plugin is licensed for PERSONAL USE ONLY.
+> </strong></span>
+
 # 🎮 ShyamDuels
 
 > **A high-performance 1v1 and team dueling plugin for Minecraft servers**
@@ -385,4 +393,5 @@ Conqueror (5000+)
 [Report Bug](https://github.com/ShyamStudios/ShyamDuels/issues) · [Request Feature](https://github.com/ShyamStudios/ShyamDuels/issues)
 
 </div>
+
 
