@@ -10,11 +10,9 @@ import fr.mrmicky.fastinv.FastInv;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
-import java.util.Set;
 
 public class KitEditorGui extends FastInv {
 
@@ -88,10 +86,18 @@ public class KitEditorGui extends FastInv {
         }
 
         if (armorContent != null && armorContent.length >= 4) {
-            setItem(slotArmor[0], armorContent[0]);
-            setItem(slotArmor[1], armorContent[1]);
-            setItem(slotArmor[2], armorContent[2]);
-            setItem(slotArmor[3], armorContent[3]);
+            if (armorContent[0] != null && armorContent[0].getType() != Material.AIR) {
+                setItem(slotArmor[0], armorContent[0].clone());
+            }
+            if (armorContent[1] != null && armorContent[1].getType() != Material.AIR) {
+                setItem(slotArmor[1], armorContent[1].clone());
+            }
+            if (armorContent[2] != null && armorContent[2].getType() != Material.AIR) {
+                setItem(slotArmor[2], armorContent[2].clone());
+            }
+            if (armorContent[3] != null && armorContent[3].getType() != Material.AIR) {
+                setItem(slotArmor[3], armorContent[3].clone());
+            }
         }
 
         setItem(slotInfo, loader.buildItemFromSection(GUI_KEY, "info", Material.BOOK,
@@ -102,7 +108,7 @@ public class KitEditorGui extends FastInv {
 
         ItemStack glass = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build();
         for (int i = 45; i < 54; i++) {
-            if (getInventory().getItem(i) == null) {
+            if (i != slotSave && i != slotReset && i != slotExit) {
                 setItem(i, glass);
             }
         }
@@ -119,8 +125,8 @@ public class KitEditorGui extends FastInv {
         
         if (invContent != null) {
             for (int i = 0; i < Math.min(invContent.length, 36); i++) {
-                if (invContent[i] != null) {
-                    setItem(9 + i, invContent[i]);
+                if (invContent[i] != null && invContent[i].getType() != Material.AIR) {
+                    setItem(9 + i, invContent[i].clone());
                 }
             }
         }
@@ -129,6 +135,12 @@ public class KitEditorGui extends FastInv {
     @Override
     public void onClick(InventoryClickEvent event) {
         int slot = event.getSlot();
+        int rawSlot = event.getRawSlot();
+
+        if (rawSlot >= getInventory().getSize()) {
+            event.setCancelled(true);
+            return;
+        }
 
         boolean isArmorSlot = false;
         int armorSlotIndex = -1;
@@ -140,17 +152,27 @@ public class KitEditorGui extends FastInv {
             }
         }
 
-        if (isArmorSlot) {
-            if (!isValidArmorForSlot(event.getCursor(), armorSlotIndex)) {
-                event.setCancelled(true);
-                MessageUtils.sendMessage(player, "gui.kit-editor.messages.invalid-armor-slot");
-                return;
-            }
-            event.setCancelled(false);
-        } else if (slot == slotOffhand || (slot >= 9 && slot <= 44)) {
-            event.setCancelled(false);
-        } else {
+        if (slot == slotSave) {
             event.setCancelled(true);
+            saveKit();
+            return;
+        }
+        if (slot == slotReset) {
+            event.setCancelled(true);
+            plugin.getKitManager().resetPlayerKit(player.getUniqueId(), kit.getName());
+            MessageUtils.sendMessage(player, "gui.kit-editor.messages.reset");
+            player.closeInventory();
+            return;
+        }
+        if (slot == slotExit) {
+            event.setCancelled(true);
+            restoreInventory();
+            player.closeInventory();
+            return;
+        }
+        if (slot == slotInfo) {
+            event.setCancelled(true);
+            return;
         }
 
         if (slot >= 45 && slot < 54 && slot != slotSave && slot != slotReset && slot != slotExit) {
@@ -158,48 +180,69 @@ public class KitEditorGui extends FastInv {
             return;
         }
 
-        if (slot == slotSave) {
-            saveKit();
-            return;
-        }
-        if (slot == slotReset) {
-            plugin.getKitManager().resetPlayerKit(player.getUniqueId(), kit.getName());
-            MessageUtils.sendMessage(player, "gui.kit-editor.messages.reset");
-            player.closeInventory();
-            return;
-        }
-        if (slot == slotExit) {
-            restoreInventory();
-            player.closeInventory();
-            return;
-        }
-        if (slot == slotInfo) {
-            return;
-        }
-
-        if (isArmorSlot && event.isRightClick()) {
-            event.setCancelled(true);
-            if (player.hasPermission("shyamduels.vip")) {
-                ItemStack item = getInventory().getItem(slot);
-                if (item != null && item.getType() != Material.AIR) {
-                    if (item.getItemMeta() instanceof org.bukkit.inventory.meta.ArmorMeta) {
-                        skipCloseTitle = true;
-                        new ArmorTrimGui(plugin, player, item, (trimmedItem) -> {
-                            skipCloseTitle = false;
-                            if (trimmedItem != null) {
-                                setItem(slot, trimmedItem);
-                            }
-                            this.open(player);
-                        }).open(player);
+        if (isArmorSlot) {
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                return;
+            }
+            if (event.isRightClick() && event.getCursor().getType() == Material.AIR) {
+                event.setCancelled(true);
+                if (player.hasPermission("shyamduels.vip")) {
+                    ItemStack item = getInventory().getItem(slot);
+                    if (item != null && item.getType() != Material.AIR) {
+                        if (item.getItemMeta() instanceof org.bukkit.inventory.meta.ArmorMeta) {
+                            skipCloseTitle = true;
+                            new ArmorTrimGui(plugin, player, item, (trimmedItem) -> {
+                                skipCloseTitle = false;
+                                if (trimmedItem != null) {
+                                    setItem(slot, trimmedItem);
+                                }
+                                this.open(player);
+                            }).open(player);
+                        } else {
+                            MessageUtils.sendMessage(player, "gui.kit-editor.messages.hold-armor");
+                        }
                     } else {
                         MessageUtils.sendMessage(player, "gui.kit-editor.messages.hold-armor");
                     }
                 } else {
-                    MessageUtils.sendMessage(player, "gui.kit-editor.messages.hold-armor");
+                    MessageUtils.sendMessage(player, "gui.kit-editor.messages.no-permission");
                 }
-            } else {
-                MessageUtils.sendMessage(player, "gui.kit-editor.messages.no-permission");
+                return;
             }
+            if (!isValidArmorForSlot(event.getCursor(), armorSlotIndex)) {
+                event.setCancelled(true);
+                MessageUtils.sendMessage(player, "gui.kit-editor.messages.invalid-armor-slot");
+                return;
+            }
+            event.setCancelled(false);
+        } else if (slot == slotOffhand) {
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                return;
+            }
+            ItemStack currentItem = getInventory().getItem(slot);
+            if (currentItem != null && currentItem.hasItemMeta()) {
+                org.bukkit.persistence.PersistentDataContainer pdc = currentItem.getItemMeta().getPersistentDataContainer();
+                org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, "offhand_placeholder");
+                if (pdc.has(key, org.bukkit.persistence.PersistentDataType.STRING)) {
+                    if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
+                        setItem(slot, event.getCursor().clone());
+                        event.getCursor().setAmount(0);
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            event.setCancelled(false);
+        } else if (slot >= 9 && slot <= 44) {
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                return;
+            }
+            event.setCancelled(false);
+        } else {
+            event.setCancelled(true);
         }
     }
     
@@ -228,47 +271,16 @@ public class KitEditorGui extends FastInv {
         }
     }
 
-    @SuppressWarnings("all")
-    public void handleDrag(InventoryDragEvent event) {
-        Set<Integer> slots = event.getRawSlots();
-        for (int rawSlot : slots) {
-            if (rawSlot >= getInventory().getSize()) {
-                continue;
-            }
-
-            boolean isArmorSlot = false;
-            int armorSlotIndex = -1;
-            for (int i = 0; i < slotArmor.length; i++) {
-                if (rawSlot == slotArmor[i]) {
-                    isArmorSlot = true;
-                    armorSlotIndex = i;
-                    break;
-                }
-            }
-
-            if (isArmorSlot) {
-                if (!isValidArmorForSlot(event.getOldCursor(), armorSlotIndex)) {
-                    event.setCancelled(true);
-                    return;
-                }
-                continue;
-            }
-
-            if (rawSlot == slotOffhand || (rawSlot >= 9 && rawSlot <= 44)) {
-                continue;
-            }
-
-            event.setCancelled(true);
-            return;
-        }
-    }
-
     private void saveKit() {
         ItemStack[] armor = new ItemStack[4];
-        armor[0] = getInventory().getItem(slotArmor[0]);
-        armor[1] = getInventory().getItem(slotArmor[1]);
-        armor[2] = getInventory().getItem(slotArmor[2]);
-        armor[3] = getInventory().getItem(slotArmor[3]);
+        for (int i = 0; i < 4; i++) {
+            ItemStack armorPiece = getInventory().getItem(slotArmor[i]);
+            if (armorPiece != null && armorPiece.getType() != Material.AIR) {
+                armor[i] = armorPiece.clone();
+            } else {
+                armor[i] = null;
+            }
+        }
 
         ItemStack offhand = getInventory().getItem(slotOffhand);
         
@@ -277,7 +289,15 @@ public class KitEditorGui extends FastInv {
             org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, "offhand_placeholder");
             if (pdc.has(key, org.bukkit.persistence.PersistentDataType.STRING)) {
                 offhand = null;
+            } else if (offhand.getType() == Material.AIR) {
+                offhand = null;
+            } else {
+                offhand = offhand.clone();
             }
+        } else if (offhand == null || offhand.getType() == Material.AIR) {
+            offhand = null;
+        } else {
+            offhand = offhand.clone();
         }
 
         ItemStack[] inv = new ItemStack[36];

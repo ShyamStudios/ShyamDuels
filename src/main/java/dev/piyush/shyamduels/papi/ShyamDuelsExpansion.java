@@ -40,6 +40,7 @@ public class ShyamDuelsExpansion extends PlaceholderExpansion implements Relatio
     public boolean canRegister() {
         return true;
     }
+
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String params) {
         if (player == null) {
@@ -56,6 +57,10 @@ public class ShyamDuelsExpansion extends PlaceholderExpansion implements Relatio
         }
 
         PlayerStats stats = plugin.getStatsManager().getStats(player);
+        if (stats == null) {
+            return "";
+        }
+
         Rank rank = Rank.getRankForElo(stats.getElo());
 
         return switch (params.toLowerCase()) {
@@ -75,30 +80,32 @@ public class ShyamDuelsExpansion extends PlaceholderExpansion implements Relatio
             case "playtime" -> stats.getFormattedPlaytime();
             case "playtime_hours" -> String.valueOf(stats.getPlaytimeHours());
             case "playtime_seconds" -> String.valueOf(stats.getPlaytime());
-            default -> null;
+            default -> "";
         };
     }
+
     @Override
     public String onPlaceholderRequest(Player one, Player two, String identifier) {
         if (one == null || two == null) {
             return "";
         }
+
         if (identifier.equalsIgnoreCase("relation")) {
             boolean oneInDuel = plugin.getDuelManager().isInDuel(one);
             boolean twoInDuel = plugin.getDuelManager().isInDuel(two);
-            if (!twoInDuel) {
+
+            if (!twoInDuel || !oneInDuel) {
                 return "§7";
             }
-            if (!oneInDuel) {
-                return "§7";
-            }
+
             Player oneOpponent = plugin.getDuelManager().getOpponent(one);
             if (oneOpponent != null && oneOpponent.equals(two)) {
                 return "§c[E]";
             }
+
             return "§a[A]";
         }
 
-        return null;
+        return "";
     }
 }

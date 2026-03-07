@@ -10,6 +10,7 @@ import dev.piyush.shyamduels.command.KitCommand;
 import dev.piyush.shyamduels.duel.DuelListener;
 import dev.piyush.shyamduels.kit.Kit;
 import dev.piyush.shyamduels.papi.ShyamDuelsExpansion;
+import dev.piyush.shyamduels.updates.UpdateChecker;
 import fr.mrmicky.fastinv.FastInvManager;
 import dev.piyush.shyamduels.arena.ArenaManager;
 import dev.piyush.shyamduels.database.DatabaseManager;
@@ -21,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.stream.Collectors;
 
-@SuppressWarnings("deprecation")
 public class ShyamDuels extends JavaPlugin {
 
     private static ShyamDuels instance;
@@ -42,6 +42,8 @@ public class ShyamDuels extends JavaPlugin {
     private dev.piyush.shyamduels.scoreboard.ScoreboardManager scoreboardManager;
     private dev.piyush.shyamduels.settings.SettingsManager settingsManager;
     private dev.piyush.shyamduels.effects.KillEffectManager killEffectManager;
+    private dev.piyush.shyamduels.queue.QueueManager queueManager;
+    private dev.piyush.shyamduels.ffa.FFAManager ffaManager;
 
     @Override
     public void onEnable() {
@@ -111,6 +113,8 @@ public class ShyamDuels extends JavaPlugin {
             new ShyamDuelsExpansion(this).register();
         }
 
+        new UpdateChecker(this);
+
         new org.bstats.bukkit.Metrics(this, 28858);
 
         printStartupBanner();
@@ -133,7 +137,7 @@ public class ShyamDuels extends JavaPlugin {
                 "&e&l   ██████╔╝&6&l╚██████╔╝&e&l███████╗&6&l███████╗&e&l███████║",
                 "&e&l   ╚═════╝ &6&l ╚═════╝ &e&l╚══════╝&6&l╚══════╝&e&l╚══════╝",
                 "",
-                "&7           Developed by &b&lPiyush&7 | Version &a" + getDescription().getVersion(),
+                "&7           Developed by &b&lPiyush&7 | Version &a" + getPluginMeta().getVersion(),
                 "&7           Running on &ePaper " + org.bukkit.Bukkit.getVersion(),
                 ""
         };
@@ -235,9 +239,6 @@ public class ShyamDuels extends JavaPlugin {
     public ConfigManager getConfigManager() {
         return configManager;
     }
-
-    private dev.piyush.shyamduels.queue.QueueManager queueManager;
-    private dev.piyush.shyamduels.ffa.FFAManager ffaManager;
 
     public dev.piyush.shyamduels.queue.QueueManager getQueueManager() {
         return queueManager;
