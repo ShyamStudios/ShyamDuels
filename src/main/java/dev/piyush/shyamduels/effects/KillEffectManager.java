@@ -30,8 +30,12 @@ public class KillEffectManager {
     }
     
     public boolean canUseEffect(Player player, KillEffect effect) {
-        int playerElo = plugin.getStatsManager().getStats(player.getUniqueId()).getElo();
-        return effect.canUse(playerElo);
+        if (effect == KillEffect.NONE) {
+            return true;
+        }
+        
+        String permission = "shyamduels.effect." + effect.name().toLowerCase();
+        return player.hasPermission(permission) || player.hasPermission("shyamduels.effect.*");
     }
     
     public void playEffect(Player killer, Location victimLocation) {
@@ -44,16 +48,14 @@ public class KillEffectManager {
     }
     
     public KillEffect[] getUnlockedEffects(Player player) {
-        int playerElo = plugin.getStatsManager().getStats(player.getUniqueId()).getElo();
         return java.util.Arrays.stream(KillEffect.values())
-            .filter(effect -> effect.canUse(playerElo))
+            .filter(effect -> canUseEffect(player, effect))
             .toArray(KillEffect[]::new);
     }
     
     public KillEffect[] getLockedEffects(Player player) {
-        int playerElo = plugin.getStatsManager().getStats(player.getUniqueId()).getElo();
         return java.util.Arrays.stream(KillEffect.values())
-            .filter(effect -> !effect.canUse(playerElo))
+            .filter(effect -> !canUseEffect(player, effect))
             .toArray(KillEffect[]::new);
     }
 }

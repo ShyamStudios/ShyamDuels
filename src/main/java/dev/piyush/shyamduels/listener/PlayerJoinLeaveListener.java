@@ -22,6 +22,14 @@ public class PlayerJoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        
+        if (plugin.getConfig().getBoolean("join-leave-messages.enabled", true)) {
+            String joinMessage = plugin.getConfig().getString("join-leave-messages.join", "&a+ &f{player}");
+            joinMessage = joinMessage.replace("{player}", player.getName());
+            event.setJoinMessage(dev.piyush.shyamduels.util.MessageUtils.color(joinMessage));
+        } else {
+            event.setJoinMessage(null);
+        }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline())
@@ -37,12 +45,32 @@ public class PlayerJoinLeaveListener implements Listener {
             teleportToLobby(player);
             plugin.getItemManager().giveSpawnItems(player);
             plugin.getScoreboardManager().createBoard(player);
+            
+            if (plugin.getConfig().getBoolean("welcome-title.enabled", true)) {
+                String title = plugin.getConfig().getString("welcome-title.title", "&b&lWELCOME");
+                String subtitle = plugin.getConfig().getString("welcome-title.subtitle", "&7{player}");
+                title = title.replace("{player}", player.getName());
+                subtitle = subtitle.replace("{player}", player.getName());
+                player.sendTitle(
+                    dev.piyush.shyamduels.util.MessageUtils.color(title),
+                    dev.piyush.shyamduels.util.MessageUtils.color(subtitle),
+                    10, 40, 10
+                );
+            }
         }, 5L);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        
+        if (plugin.getConfig().getBoolean("join-leave-messages.enabled", true)) {
+            String leaveMessage = plugin.getConfig().getString("join-leave-messages.leave", "&c- &f{player}");
+            leaveMessage = leaveMessage.replace("{player}", player.getName());
+            event.setQuitMessage(dev.piyush.shyamduels.util.MessageUtils.color(leaveMessage));
+        } else {
+            event.setQuitMessage(null);
+        }
 
         plugin.getPartyManager().handlePlayerDisconnect(player);
 

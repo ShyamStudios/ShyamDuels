@@ -7,6 +7,64 @@ general:
   invalid-player: "&cPlayer not found or offline."
   usage: "&eUsage: &f{usage}"
 
+settings:
+  toggled: "&aSetting &f{setting} &ais now &f{status}&a!"
+
+auto-gg:
+  messages:
+    - "GG"
+    - "Good game!"
+    - "Well played!"
+    - "Better Luck Next Time!"
+    - "Nice try!"
+    - "Well done!"
+    - "GGWP"
+    - "Close game!"
+    - "That was fun!"
+    - "You did great!"
+    - "Respectable effort!"
+    - "Fair play!"
+    - "Good effort!"
+    - "Keep it up!"
+    - "You'll get it next time!"
+    - "Epic fight!"
+    - "That was intense!"
+    - "GG, well deserved!"
+    - "Tough match!"
+    - "Well fought!"
+    - "Hard luck!"
+    - "That was close!"
+    - "You almost had it!"
+    - "Skilled play!"
+    - "Not bad!"
+    - "Well deserved!"
+    - "Outplayed!"
+    - "Unlucky!"
+    - "Sharp moves!"
+    - "Next time for sure!"
+    - "You're improving!"
+    - "Sweaty game!"
+    - "Could've gone either way!"
+    - "Try again!"
+    - "Great attempt!"
+    - "Amazing effort!"
+    - "Better next round!"
+    - "Strong performance!"
+    - "Top-tier play!"
+    - "EZ"
+    - "No hard feelings!"
+    - "A solid match!"
+    - "That was wild!"
+    - "Game well played!"
+    - "Respect!"
+    - "A true challenge!"
+    - "You gave it your all!"
+    - "What a match!"
+
+effects:
+  selected: "&aSelected kill effect: &f{effect}"
+  locked: "&cThis effect is locked! Required permission: &fshyamduels.effect.*"
+
 gui:
   select-kit-title: "&8Select a Kit"
   kit-selector:
@@ -78,6 +136,16 @@ arena:
   build-mode-off: "&cBuild mode &lDISABLED &cfor arena &f{name}"
   kit-linked: "&aKit &f{kit} &alinked to arena &f{arena}"
   kit-unlinked: "&aKit &f{kit} &aunlinked from arena &f{arena}"
+  reset: "&aArena &f{name} &ahas been reset!"
+  setup-guide: |
+    &b&lArena Setup Guide:
+    &71. &f/arena create <name> &7- Create the arena
+    &72. &f/arena corner1 <name> &7- Set first corner
+    &73. &f/arena corner2 <name> &7- Set second corner
+    &74. &f/arena spawn1 <name> &7- Set spawn point 1
+    &75. &f/arena spawn2 <name> &7- Set spawn point 2
+    &76. &f/arena center <name> &7- Set center location
+    &77. &f/arena addkit <name> <kit> &7- Link kit to arena
 
 kit:
   created: "&aKit &f{name} &acreated successfully!"
@@ -87,6 +155,13 @@ kit:
   list: "&bKits: &f{kits}"
   saved: "&aKit &f{name} &aupdated with your inventory!"
   equipped: "&bEquipped kit &f{name}"
+  setup-guide: |
+    &b&lKit Setup Guide:
+    &71. &fEquip your desired items and armor
+    &72. &f/kit create <name> &7- Create the kit
+    &73. &f/kit seticon <name> &7- Set kit icon (hold item)
+    &74. &f/kit addkit <arena> <kit> &7- Link to arena
+    &7Optional: &f/kit allowblock <name> &7- Allow block placement
 
 duel:
   title:

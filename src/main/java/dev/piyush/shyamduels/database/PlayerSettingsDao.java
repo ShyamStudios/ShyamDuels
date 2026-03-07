@@ -23,7 +23,9 @@ public class PlayerSettingsDao {
                 "auto_gg BOOLEAN DEFAULT 1, " +
                 "death_messages BOOLEAN DEFAULT 1, " +
                 "killstreak_messages BOOLEAN DEFAULT 1, " +
-                "match_start_sounds BOOLEAN DEFAULT 1" +
+                "match_start_sounds BOOLEAN DEFAULT 1, " +
+                "time_preference VARCHAR(20) DEFAULT 'DEFAULT', " +
+                "weather_preference VARCHAR(20) DEFAULT 'DEFAULT'" +
                 ");";
         
         try (PreparedStatement stmt = dbManager.getStatsConnection().prepareStatement(sql)) {
@@ -46,6 +48,25 @@ public class PlayerSettingsDao {
                     settings.setDeathMessages(rs.getBoolean("death_messages"));
                     settings.setKillstreakMessages(rs.getBoolean("killstreak_messages"));
                     settings.setMatchStartSounds(rs.getBoolean("match_start_sounds"));
+                    
+                    try {
+                        String timePref = rs.getString("time_preference");
+                        if (timePref != null) {
+                            settings.setTimePreference(PlayerSettings.TimePreference.valueOf(timePref));
+                        }
+                    } catch (Exception e) {
+                        settings.setTimePreference(PlayerSettings.TimePreference.DEFAULT);
+                    }
+                    
+                    try {
+                        String weatherPref = rs.getString("weather_preference");
+                        if (weatherPref != null) {
+                            settings.setWeatherPreference(PlayerSettings.WeatherPreference.valueOf(weatherPref));
+                        }
+                    } catch (Exception e) {
+                        settings.setWeatherPreference(PlayerSettings.WeatherPreference.DEFAULT);
+                    }
+                    
                     return settings;
                 }
             }
@@ -57,8 +78,8 @@ public class PlayerSettingsDao {
     }
     
     public void saveSettings(PlayerSettings settings) {
-        String sql = "REPLACE INTO player_settings (player_uuid, auto_gg, death_messages, killstreak_messages, match_start_sounds) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "REPLACE INTO player_settings (player_uuid, auto_gg, death_messages, killstreak_messages, match_start_sounds, time_preference, weather_preference) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement stmt = dbManager.getStatsConnection().prepareStatement(sql)) {
             stmt.setString(1, settings.getPlayerUuid().toString());
@@ -66,6 +87,8 @@ public class PlayerSettingsDao {
             stmt.setBoolean(3, settings.isDeathMessages());
             stmt.setBoolean(4, settings.isKillstreakMessages());
             stmt.setBoolean(5, settings.isMatchStartSounds());
+            stmt.setString(6, settings.getTimePreference().name());
+            stmt.setString(7, settings.getWeatherPreference().name());
             stmt.executeUpdate();
         } catch (SQLException e) {
             ShyamDuels.getInstance().getLogger().log(Level.SEVERE, "Could not save player settings", e);

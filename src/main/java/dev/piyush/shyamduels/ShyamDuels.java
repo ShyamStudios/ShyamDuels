@@ -104,6 +104,8 @@ public class ShyamDuels extends JavaPlugin {
                 new dev.piyush.shyamduels.listener.PlayerJoinLeaveListener(this), this);
         getServer().getPluginManager().registerEvents(
                 new dev.piyush.shyamduels.listener.PlayerInteractListener(this), this);
+        getServer().getPluginManager().registerEvents(
+                new dev.piyush.shyamduels.listener.PlayerPreferenceListener(this), this);
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new ShyamDuelsExpansion(this).register();

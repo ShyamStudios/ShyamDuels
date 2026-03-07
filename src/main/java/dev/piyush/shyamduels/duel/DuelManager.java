@@ -206,6 +206,11 @@ public class DuelManager {
                 p.teleport(spawn);
                 resetPlayer(p);
                 p.sendMessage(summary);
+                
+                if (plugin.getSettingsManager().getSettings(uuid).isAutoGG()) {
+                    sendRandomGGMessage(p);
+                }
+                
                 activeDuels.remove(uuid);
                 invites.remove(uuid);
                 endingDuels.remove(uuid);
@@ -253,6 +258,17 @@ public class DuelManager {
         p.getActivePotionEffects().forEach(e -> p.removePotionEffect(e.getType()));
         p.setFireTicks(0);
         p.setGameMode(org.bukkit.GameMode.SURVIVAL);
+    }
+    
+    private void sendRandomGGMessage(Player player) {
+        List<String> messages = plugin.getConfigManager().getMessages().getStringList("auto-gg.messages");
+        if (messages.isEmpty()) {
+            player.chat("GG");
+            return;
+        }
+        
+        String randomMessage = messages.get(new java.util.Random().nextInt(messages.size()));
+        player.chat(randomMessage);
     }
 
     private final Map<UUID, InviteData> invites = new ConcurrentHashMap<>();

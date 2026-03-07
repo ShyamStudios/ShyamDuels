@@ -26,6 +26,102 @@ permissions:
   shyamduels.use:
     description: Basic plugin usage
     default: true
+  shyamduels.effect.*:
+    description: Access to all kill effects
+    default: op
+  shyamduels.effect.none:
+    description: No effect
+    default: true
+  shyamduels.effect.blood:
+    description: Blood Explosion effect
+    default: false
+  shyamduels.effect.lightning:
+    description: Lightning Strike effect
+    default: false
+  shyamduels.effect.explosion:
+    description: TNT Blast effect
+    default: false
+  shyamduels.effect.flame:
+    description: Inferno effect
+    default: false
+  shyamduels.effect.heart:
+    description: Love Burst effect
+    default: false
+  shyamduels.effect.ender:
+    description: Ender Vortex effect
+    default: false
+  shyamduels.effect.snow:
+    description: Blizzard effect
+    default: false
+  shyamduels.effect.slime:
+    description: Slime Explosion effect
+    default: false
+  shyamduels.effect.smoke:
+    description: Smoke Bomb effect
+    default: false
+  shyamduels.effect.water:
+    description: Tsunami effect
+    default: false
+  shyamduels.effect.lava:
+    description: Volcano effect
+    default: false
+  shyamduels.effect.enchant:
+    description: Mystic Runes effect
+    default: false
+  shyamduels.effect.crit:
+    description: Critical Strike effect
+    default: false
+  shyamduels.effect.magic:
+    description: Arcane Blast effect
+    default: false
+  shyamduels.effect.witch:
+    description: Witch Curse effect
+    default: false
+  shyamduels.effect.dragon:
+    description: Dragon Roar effect
+    default: false
+  shyamduels.effect.totem:
+    description: Resurrection effect
+    default: false
+  shyamduels.effect.firework:
+    description: Celebration effect
+    default: false
+  shyamduels.effect.note:
+    description: Symphony effect
+    default: false
+  shyamduels.effect.villager:
+    description: Trade Success effect
+    default: false
+  shyamduels.effect.angry:
+    description: Rage Mode effect
+    default: false
+  shyamduels.effect.soul:
+    description: Soul Reaper effect
+    default: false
+  shyamduels.effect.sculk:
+    description: Warden's Wrath effect
+    default: false
+  shyamduels.effect.honey:
+    description: Sweet Victory effect
+    default: false
+  shyamduels.effect.spore:
+    description: Nature's Bloom effect
+    default: false
+  shyamduels.effect.cherry:
+    description: Sakura Storm effect
+    default: false
+  shyamduels.effect.glow:
+    description: Bioluminescence effect
+    default: false
+  shyamduels.effect.wax:
+    description: Candle Ritual effect
+    default: false
+  shyamduels.effect.electric:
+    description: Thunderbolt effect
+    default: false
+  shyamduels.effect.rainbow:
+    description: Prismatic Burst effect
+    default: false
 
 commands:
   duel:

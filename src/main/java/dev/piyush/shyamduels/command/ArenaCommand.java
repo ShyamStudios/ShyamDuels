@@ -196,6 +196,22 @@ public class ArenaCommand extends BaseCommand {
                 Map.of("usage", "Build mode set to " + build + " for arena " + name));
     }
 
+    @Subcommand("reset")
+    @CommandCompletion("@arenas")
+    @Description("Reset an arena to its original state")
+    public void onReset(Player player, String name) {
+        Arena arena = arenaManager.getArena(name);
+        if (arena == null) {
+            MessageUtils.sendMessage(player, "arena.not-found", Map.of("name", name));
+            return;
+        }
+
+        arena.setStatus(Arena.ArenaStatus.AVAILABLE);
+        arenaManager.saveArena(arena);
+        
+        MessageUtils.sendMessage(player, "arena.reset", Map.of("name", name));
+    }
+
     @Subcommand("ffa")
     @CommandCompletion("@arenas true|false")
     @Description("Set arena as FFA type")

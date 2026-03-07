@@ -55,6 +55,20 @@ items:
     commands: ["player:party create"]
     enchanted: true
 
+  settings:
+    slot: 7
+    material: COMPARATOR
+    name: "&b&l⚙ Settings"
+    lore: 
+      - "&7&m━━━━━━━━━━━━━━━━━━━━━"
+      - ""
+      - "&f Configure your preferences"
+      - "&f Time, weather, and more!"
+      - ""
+      - "&7&m━━━━━━━━━━━━━━━━━━━━━"
+    commands: ["player:settings"]
+    enchanted: true
+
   spectate:
     slot: 8
     material: ENDER_EYE

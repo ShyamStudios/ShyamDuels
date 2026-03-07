@@ -9,6 +9,8 @@ public class PlayerSettings {
     private boolean deathMessages;
     private boolean killstreakMessages;
     private boolean matchStartSounds;
+    private TimePreference timePreference;
+    private WeatherPreference weatherPreference;
     
     public PlayerSettings(UUID playerUuid) {
         this.playerUuid = playerUuid;
@@ -16,6 +18,8 @@ public class PlayerSettings {
         this.deathMessages = true;
         this.killstreakMessages = true;
         this.matchStartSounds = true;
+        this.timePreference = TimePreference.DEFAULT;
+        this.weatherPreference = WeatherPreference.DEFAULT;
     }
     
     public UUID getPlayerUuid() {
@@ -84,6 +88,30 @@ public class PlayerSettings {
             default:
                 return true;
         }
+    }
+    
+    public TimePreference getTimePreference() {
+        return timePreference;
+    }
+    
+    public void setTimePreference(TimePreference timePreference) {
+        this.timePreference = timePreference;
+    }
+    
+    public WeatherPreference getWeatherPreference() {
+        return weatherPreference;
+    }
+    
+    public void setWeatherPreference(WeatherPreference weatherPreference) {
+        this.weatherPreference = weatherPreference;
+    }
+    
+    public enum TimePreference {
+        DEFAULT, DAY, NIGHT
+    }
+    
+    public enum WeatherPreference {
+        DEFAULT, CLEAR, RAIN, STORM
     }
     
     public enum SettingType {

@@ -282,7 +282,8 @@ public class KitEditorGui extends FastInv {
 
         ItemStack[] inv = new ItemStack[36];
         for (int i = 0; i < 36; i++) {
-            inv[i] = getInventory().getItem(9 + i);
+            ItemStack item = getInventory().getItem(9 + i);
+            inv[i] = (item != null && item.getType() != Material.AIR) ? item.clone() : null;
         }
 
         PlayerKit newPk = new PlayerKit(player.getUniqueId(), kit.getName());
@@ -297,6 +298,7 @@ public class KitEditorGui extends FastInv {
     }
 
     private void restoreInventory() {
+        player.getInventory().clear();
         player.getInventory().setContents(backupInventory);
         player.getInventory().setArmorContents(backupArmor);
         player.getInventory().setItemInOffHand(backupOffhand);

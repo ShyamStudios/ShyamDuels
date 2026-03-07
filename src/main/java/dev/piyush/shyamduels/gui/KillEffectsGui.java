@@ -37,7 +37,6 @@ public class KillEffectsGui extends FastInv {
     private void setupItems() {
         KillEffect[] allEffects = KillEffect.values();
         KillEffect currentEffect = plugin.getKillEffectManager().getPlayerEffect(player.getUniqueId());
-        int playerElo = plugin.getStatsManager().getStats(player.getUniqueId()).getElo();
         
         int startIndex = page * ITEMS_PER_PAGE;
         int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, allEffects.length);
@@ -46,7 +45,7 @@ public class KillEffectsGui extends FastInv {
             KillEffect effect = allEffects[i];
             int slot = i - startIndex;
             
-            setItem(slot, createEffectItem(effect, currentEffect, playerElo), e -> {
+            setItem(slot, createEffectItem(effect, currentEffect), e -> {
                 if (plugin.getKillEffectManager().canUseEffect(player, effect)) {
                     plugin.getKillEffectManager().setPlayerEffect(player.getUniqueId(), effect);
                     player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
@@ -59,8 +58,7 @@ public class KillEffectsGui extends FastInv {
                 } else {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                     MessageUtils.sendMessage(player, "effects.locked", 
-                        java.util.Map.of("effect", effect.getDisplayName(), 
-                                       "elo", String.valueOf(effect.getRequiredElo())));
+                        java.util.Map.of("effect", effect.getDisplayName()));
                 }
             });
         }
@@ -77,12 +75,12 @@ public class KillEffectsGui extends FastInv {
             });
         }
         
-        setItem(49, createInfoItem(playerElo), e -> {});
+        setItem(49, createInfoItem(), e -> {});
     }
     
     @SuppressWarnings("deprecation")
-    private ItemStack createEffectItem(KillEffect effect, KillEffect currentEffect, int playerElo) {
-        boolean unlocked = effect.canUse(playerElo);
+    private ItemStack createEffectItem(KillEffect effect, KillEffect currentEffect) {
+        boolean unlocked = plugin.getKillEffectManager().canUseEffect(player, effect);
         boolean selected = effect == currentEffect;
         
         Material material = unlocked ? effect.getIcon() : Material.GRAY_DYE;
@@ -107,8 +105,8 @@ public class KillEffectsGui extends FastInv {
                 lore.add(MessageUtils.color("&eClick to select"));
             }
         } else {
-            lore.add(MessageUtils.color("&cRequired ELO: &f" + effect.getRequiredElo()));
-            lore.add(MessageUtils.color("&7Your ELO: &f" + playerElo));
+            lore.add(MessageUtils.color("&cRequired Permission:"));
+            lore.add(MessageUtils.color("&7shyamduels.effect." + effect.name().toLowerCase()));
         }
         
         meta.setLore(lore);
@@ -127,19 +125,20 @@ public class KillEffectsGui extends FastInv {
     }
     
     @SuppressWarnings("deprecation")
-    private ItemStack createInfoItem(int playerElo) {
+    private ItemStack createInfoItem() {
         ItemStack item = new ItemStack(Material.NETHER_STAR);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(MessageUtils.color("&b&lYour Stats"));
+        meta.setDisplayName(MessageUtils.color("&b&lYour Effects"));
         
         List<String> lore = new ArrayList<>();
-        lore.add(MessageUtils.color("&7Your ELO: &f" + playerElo));
+        lore.add(MessageUtils.color("&7Kill effects are now"));
+        lore.add(MessageUtils.color("&7permission-based!"));
         lore.add("");
         
         int unlocked = 0;
         int locked = 0;
         for (KillEffect effect : KillEffect.values()) {
-            if (effect.canUse(playerElo)) {
+            if (plugin.getKillEffectManager().canUseEffect(player, effect)) {
                 unlocked++;
             } else {
                 locked++;

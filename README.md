@@ -8,15 +8,27 @@
 
 # 🎮 ShyamDuels
 
-> **A high-performance 1v1 and team dueling plugin for Minecraft servers**
+> **A high-performance 1v1 and team dueling plugin for Minecraft servers with MiniMessage support**
 
-![Version](https://img.shields.io/badge/version-1.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.2-brightgreen)
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.4+-blue)
 ![Status](https://img.shields.io/badge/status-stable-success)
 
 ---
 
 ## ✨ Features
+
+### 🆕 New in Version 1.2
+- **MiniMessage Support** - Full RGB, gradients, shadows, and advanced formatting everywhere
+- **Custom Join/Leave Messages** - Fully customizable with placeholders
+- **Welcome Titles** - Greet players with beautiful title screens
+- **Permission-Based Kill Effects** - 30+ effects unlocked via permissions (no longer ELO-based)
+- **Personal Time/Weather** - Players can set their own time and weather preferences
+- **Enhanced Settings Menu** - Time, weather, and gameplay preferences
+- **Arena Reset Command** - Quickly reset arenas to original state
+- **Detailed Help System** - Multi-page help with setup guides
+- **Kit Editor Fix** - Slot 8 bug fixed, all slots work perfectly
+- **Legacy Color Support** - Both `&` codes and MiniMessage work seamlessly
 
 ### 🗡️ Advanced Duel System
 - **Ranked 1v1 Duels** - ELO-based competitive matchmaking
@@ -50,6 +62,20 @@
 - **Armor Trims** - VIP players can customize armor appearance
 - **Personal Layouts** - Each player saves their own kit arrangement
 - **Real-time Preview** - See changes instantly
+- **All Slots Fixed** - Slot 8 bug resolved, all 36 slots work perfectly
+
+### 💥 Kill Effects (30+ Effects)
+- **Permission-Based** - Unlock effects via permissions, not ELO
+- **Stunning Visuals** - Blood, Lightning, Explosions, Dragons, and more
+- **Easy Management** - Grant permissions to unlock effects
+- **Categories**: Basic (Blood, Lightning), Elemental (Fire, Water, Ice), Magical (Enchant, Witch, Dragon), Nature (Cherry, Spore, Honey), and Special (Rainbow, Electric, Soul)
+
+### ⚙️ Player Settings
+- **Personal Time** - Set your own time (Day/Night/Default)
+- **Personal Weather** - Choose your weather (Clear/Rain/Storm/Default)
+- **Gameplay Preferences** - Auto GG, death messages, killstreaks, sounds
+- **Persistent** - Settings saved across sessions
+- **Non-Intrusive** - Only affects individual player, not server-wide
 
 ### 👥 Party System
 - **Party Creation** - Team up with friends
@@ -83,6 +109,8 @@
 | `/queue` | `/play` | Join ranked matchmaking |
 | `/ffa` | | Join Free For All |
 | `/kiteditor [kit]` | `/editkit` | Customize your kit layout |
+| `/settings` | `/preferences` | Open settings menu (time/weather/preferences) |
+| `/effects` | `/killeffects` | Select your kill effect |
 | `/leavefight` | `/leave`, `/spawn` | Return to lobby |
 | `/spectate [player]` | | Watch ongoing matches |
 | `/party` | `/p` | Party management |
@@ -93,6 +121,7 @@
 |---------|-------------|
 | `/arena create <name>` | Create new arena |
 | `/arena delete <name>` | Delete arena |
+| `/arena reset <name>` | Reset arena to original state |
 | `/arena corner1/2 <arena>` | Set arena boundaries |
 | `/arena spawn1/2 <arena>` | Set spawn points |
 | `/arena addkit <arena> <kit>` | Link kit to arena |
@@ -103,6 +132,8 @@
 | `/kit setinv <name>` | Update kit inventory |
 | `/kit seticon <name>` | Set kit icon |
 | `/kit allowblock <name>` | Add block to whitelist |
+| `/shyamduels help [page]` | Show detailed help (3 pages) |
+| `/shyamduels guide [arena\|kit]` | Show setup guides |
 | `/shyamduels reload` | Reload configuration |
 
 ---
@@ -113,6 +144,18 @@
 |------------|-------------|
 | `shyamduels.admin` | Full admin access |
 | `shyamduels.vip` | VIP features (armor trims, larger parties) |
+| `shyamduels.effect.*` | All kill effects |
+| `shyamduels.effect.<name>` | Specific kill effect (blood, lightning, etc.) |
+
+### Kill Effect Permissions
+All 30+ effects have individual permissions:
+- `shyamduels.effect.blood` - Blood Explosion
+- `shyamduels.effect.lightning` - Lightning Strike
+- `shyamduels.effect.explosion` - TNT Blast
+- `shyamduels.effect.flame` - Inferno
+- `shyamduels.effect.dragon` - Dragon Roar
+- `shyamduels.effect.rainbow` - Prismatic Burst
+- And 24 more... (see plugin.yml for full list)
 
 ---
 
@@ -148,11 +191,24 @@
 6. Link kit: /arena addkit Arena1 NoDebuff
 ```
 
-### 3. Test It Out
+### 3. Configure Kill Effects
 ```
-/queue - Join matchmaking
-/duel <player> - Challenge someone
-/ffa - Join FFA (if configured)
+Grant permissions in your permissions plugin:
+- luckperms user <player> permission set shyamduels.effect.blood true
+- luckperms user <player> permission set shyamduels.effect.lightning true
+- Or grant all: shyamduels.effect.*
+```
+
+### 4. Customize Messages (MiniMessage)
+Edit `messages.yml`:
+```yaml
+join-leave-messages:
+  join: "<gradient:green:aqua>+ {player}</gradient>"
+  leave: "<gradient:red:dark_red>- {player}</gradient>"
+
+welcome-title:
+  title: "<gradient:gold:yellow><bold>WELCOME</bold></gradient>"
+  subtitle: "<rainbow>{player}</rainbow>"
 ```
 
 ---
@@ -181,7 +237,7 @@
 /arena addkit FFAArena NoDebuff
 ```
 
-### Build Arena (SkyWars/Bridge)
+### Build Arena
 ```bash
 /arena create BuildArena
 # ... set corners and spawns ...
@@ -244,12 +300,39 @@
 - Party settings
 - ELO system configuration
 - Rank definitions
+- **Join/Leave messages** - Customize player join/leave messages
+- **Welcome title** - Configure welcome title screen
 
 ### Messages (`messages.yml`)
 - All plugin messages
-- Gradient color support
-- MiniMessage format
+- **MiniMessage support** - Use `<gradient:red:blue>Text</gradient>`, `<rainbow>`, `<#FF5555>`, etc.
+- **Legacy support** - Traditional `&` color codes still work
+- **RGB colors** - Full hex color support (`&#FF5555` or `<#FF5555>`)
+- **Gradients** - `<gradient:color1:color2>text</gradient>`
+- **Shadows** - `<shadow>text</shadow>`
+- **Hover/Click** - Advanced MiniMessage features
 - Fully customizable
+
+### MiniMessage Examples
+```yaml
+# Gradient
+join-message: "<gradient:green:aqua>+ {player}</gradient>"
+
+# RGB Hex
+title: "<#FF5555><bold>WELCOME</bold></#FF5555>"
+
+# Rainbow
+subtitle: "<rainbow>{player}</rainbow>"
+
+# Shadow effect
+death-message: "<shadow><red>☠ {player} was eliminated</red></shadow>"
+
+# Combined
+rank-up: "<gradient:gold:yellow><bold>RANK UP!</bold></gradient> <gray>→</gray> <aqua>{rank}</aqua>"
+
+# Legacy still works
+old-style: "&b&lShyamDuels &7- &fPractice"
+```
 
 ### GUI (`gui.yml`)
 - All GUI layouts
@@ -330,11 +413,30 @@ Conqueror (5000+)
 - Ensure FastAsyncWorldEdit is installed
 - Check console for errors
 - Verify arena boundaries are set correctly
+- Use `/arena reset <name>` to manually reset
 
 ### Players Can't Join Queue
 - Verify kit is linked to arena: `/arena addkit <arena> <kit>`
 - Check if arena has both spawn points set
 - Ensure arena is not in use
+
+### Kill Effects Not Working
+- Effects are now permission-based, not ELO-based
+- Grant permissions: `shyamduels.effect.*` or specific effects
+- Check `/effects` menu to see available effects
+- Verify player has permission using `/lp user <player> permission check shyamduels.effect.<name>`
+
+### MiniMessage Not Working
+- Ensure you're using correct syntax: `<gradient:red:blue>text</gradient>`
+- Legacy `&` codes still work if you prefer
+- Check for syntax errors in your messages.yml
+- Test with simple colors first: `<red>text</red>`
+
+### Settings Not Saving
+- Check database connection
+- Verify file permissions
+- Check console for errors
+- Try `/shyamduels reload`
 
 ### Database Errors
 - Check database credentials in config.yml
